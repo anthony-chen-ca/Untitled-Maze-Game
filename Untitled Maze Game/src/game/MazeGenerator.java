@@ -1,21 +1,22 @@
 package game;
 
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class MazeGenerator {
 	private int size;
-	private char[][] map;
+	private int mapSize;
+	private int[][] map;
 	private MazeCell[][] nodeGrid;
 	private ArrayList<MazeCell> unlinkedNodes;
-	private Random rnd = new Random();
 
 	public MazeGenerator(int size) {
 		this.size = size;
 		unlinkedNodes = new ArrayList<MazeCell>();
 		genNodeGrid();
 		genPaths();
-		genCharMap();
+		genMap();
+		// output();
 	}
 	
 	private void genNodeGrid() {
@@ -71,14 +72,14 @@ public class MazeGenerator {
 		return true;
 	}
 
-	private void genCharMap() {
-		int mapSize = size * 2 + 1;
-		map = new char[mapSize][mapSize];
+	private void genMap() {
+		this.mapSize = size * 2 + 1;
+		map = new int[mapSize][mapSize];
 
 		// central walls
 		for (int row = 1; row < mapSize - 1; row++) {
 			for (int col = 1; col < mapSize - 1; col++) {
-				map[row][col] = '1';
+				map[row][col] = 1;
 			}
 		}
 
@@ -88,32 +89,45 @@ public class MazeGenerator {
 				String links = nodeGrid[row][col].openLinks;
 				int mapRow = row * 2 + 1;
 				int mapCol = col * 2 + 1;
-				map[mapRow][mapCol] = '0';
+				map[mapRow][mapCol] = 0;
 				if (!links.contains("N")) {
-					map[mapRow - 1][mapCol] = '0';
+					map[mapRow - 1][mapCol] = 0;
 				}
 				if (!links.contains("E")) {
-					map[mapRow][mapCol + 1] = '0';
+					map[mapRow][mapCol + 1] = 0;
 				}
 				if (!links.contains("S")) {
-					map[mapRow + 1][mapCol] = '0';
+					map[mapRow + 1][mapCol] = 0;
 				}
 				if (!links.contains("W")) {
-					map[mapRow][mapCol - 1] = '0';
+					map[mapRow][mapCol - 1] = 0;
 				}
 			}
 		}
 
 		// borders (overwrites paths)
 		for (int row = 0; row < mapSize; row++) {
-			map[row][0] = '1';
-			map[row][mapSize - 1] = '1';
+			map[row][0] = 1;
+			map[row][mapSize - 1] = 1;
 		}
+		ArrayList<int[]> emptyPositions = new ArrayList<int[]>();
 		for (int col = 0; col < mapSize; col++) {
-			map[0][col] = '1';
-			map[mapSize - 1][col] = '1';
+			map[0][col] = 1;
+			if (map[mapSize - 3][col] == 0) {
+				int[] pos = {mapSize - 3, col};
+				emptyPositions.add(pos);
+			}
+			map[mapSize - 2][col] = 1;
+			map[mapSize - 1][col] = 1;
 		}
+		
+		// carve out final path
+		int randomNum = randomNum(0, emptyPositions.size()-1);
+		int[] position = emptyPositions.get(randomNum);
+		map[position[0]+1][position[1]] = 0;
+	}
 
+	public void output() {
 		// printing
 		for (int i = 0; i < mapSize; i++) {
 			System.out.print("{");
@@ -127,12 +141,16 @@ public class MazeGenerator {
 			System.out.println();
 		}
 	}
+	
+	public int randomNum(int min, int max) {
+		return ThreadLocalRandom.current().nextInt(min, max + 1);
+	}
 
-	public char[][] getCharMap() {
+	public int[][] getMap() {
 		return map;
 	}
 
 	public static void main(String[] args) {
-		new MazeGenerator(5);
+		new MazeGenerator(10);
 	}
 }

@@ -1,6 +1,8 @@
 package game;
 
 public class Player extends Entity {
+	private static final long serialVersionUID = 1L;
+	
 	private int health;
 	
 	public Player(double x, double y, Image image) {
@@ -21,13 +23,8 @@ public class Player extends Entity {
 		this.health = health;
 	}
 	
-	public void move(int[][] map, InputListener inputListener) {
-		boolean left = inputListener.left;
-		boolean right = inputListener.right;
-		boolean forward = inputListener.forward;
-		boolean back = inputListener.back;
-		
-		int turnAmountX = inputListener.turnAmountX;
+	public void move(int[][] map, boolean forward, boolean back, boolean left, boolean right) {
+		// int turnAmountX = inputListener.turnAmountX;
 		
 		if (forward) {
 			double xValue = xDir*MOVE_SPEED;
@@ -85,7 +82,7 @@ public class Player extends Entity {
 			xPlane = xPlane*Math.cos(rotateSpeed) - yPlane*Math.sin(rotateSpeed);
 			yPlane = oldxPlane*Math.sin(rotateSpeed) + yPlane*Math.cos(rotateSpeed);
 			
-			inputListener.turnAmountX = 0;
+			// inputListener.turnAmountX = 0;
 		}
 		// if (turnAmountX > 0) { // look right
 		if (right) {
@@ -99,7 +96,12 @@ public class Player extends Entity {
 			xPlane = xPlane*Math.cos(rotateSpeed) - yPlane*Math.sin(rotateSpeed);
 			yPlane = oldxPlane*Math.sin(rotateSpeed) + yPlane*Math.cos(rotateSpeed);
 			
-			inputListener.turnAmountX = 0;
+			// inputListener.turnAmountX = 0;
+		}
+		
+		if (xPos >= map.length - 3) {
+			System.out.println("YOU WIN!");
+			System.exit(0);
 		}
 	}
 }

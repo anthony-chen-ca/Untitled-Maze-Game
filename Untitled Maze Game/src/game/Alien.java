@@ -3,6 +3,8 @@ package game;
 import java.util.ArrayList;
 
 public class Alien extends Entity {
+	private static final long serialVersionUID = 1L;
+	
 	private boolean active = true;
 	private int damage;
 
@@ -154,5 +156,13 @@ public class Alien extends Entity {
 
 	private double calculateDistance(double x1, double y1, double x2, double y2) {
 		return (double)(Math.sqrt(Math.pow(x1-x2, 2) + Math.pow(y1-y2, 2)));
+	}
+	
+	public boolean isActive() {
+		return this.active;
+	}
+	
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 }
