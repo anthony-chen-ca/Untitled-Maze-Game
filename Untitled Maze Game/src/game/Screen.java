@@ -160,10 +160,10 @@ public class Screen {
 				int color;
 				if (side == 0) {
 					color = textures.get(texNum).getPixels()[Math.abs(texX + (texY * textures.get(texNum).getWidth()))];
-					color = fadeToBlack(color, perpWallDist);
+//					color = fadeToBlack(color, perpWallDist); // TODO
 				} else {
 					color = (textures.get(texNum).getPixels()[Math.abs(texX + (texY * textures.get(texNum).getHeight()))]>>1) & 8355711; // shadow on y sides
-					color = fadeToBlack(color, perpWallDist);
+//					color = fadeToBlack(color, perpWallDist); // TODO
 				}
 				pixels[x + y*(width)] = color;
 			}
@@ -238,7 +238,7 @@ public class Screen {
 						int imageY = ((d * image.getHeight()) / spriteHeight) / 256;
 						int color = image.getPixels()[Math.abs(imageX + (imageY * image.getWidth()))];
 						if (color != GREEN_SCREEN.getRGB()) {
-							color = fadeToBlack(color, sprite.getDist());
+//							color = fadeToBlack(color, sprite.getDist()); // TODO
 							pixels[stripe + y*(width)] = color;
 						}
 					}
@@ -265,7 +265,12 @@ public class Screen {
 			return color;
 		} else {
 			Color c = new Color(color);
-			double intensity = 1.0/distance;
+			double intensity;
+			if (distance < 10) {
+				intensity = Math.round((1.0/distance) * 100.0) / 100.0;
+			} else {
+				intensity = 0;
+			}
 			int r = (int) ((c.getRed() * intensity));
 			int g = (int) ((c.getGreen() * intensity));
 			int b = (int) ((c.getBlue() * intensity));
@@ -288,7 +293,7 @@ public class Screen {
 	}
 
 	public static double calcDist(double x1, double y1, double x2, double y2) {
-		return Math.sqrt(Math.pow((x1-x2), 2) + Math.pow((y1-y2), 2));
+		return (Math.pow((x1-x2), 2) + Math.pow((y1-y2), 2));
 	}
 
 	public static ArrayList<Sprite> sortSprites(ArrayList<Sprite> sprites) {

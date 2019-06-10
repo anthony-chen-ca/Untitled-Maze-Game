@@ -28,6 +28,10 @@ public class Server {
 	// game objects
 	private ArrayList<Player> players = new ArrayList<Player>();
 	private Alien alien;
+	private ArrayList<Rune> runes = new ArrayList<Rune>();
+	
+	// password
+	private String password;
 
 	public static void main(String[] args) {
 		new Server().go();
@@ -95,7 +99,7 @@ public class Server {
 			close();
 		}
 
-		public void sendMessage(String type, boolean broadcast) {
+		private void sendMessage(String type, boolean broadcast) {
 			String message = "ERROR";
 			if (type.equals("CLIENT")) {
 				// CLIENT - Send the client number identifier.
@@ -154,7 +158,7 @@ public class Server {
 			}
 		}
 
-		public void getData(String message) {
+		private void getData(String message) {
 			if (message.substring(0,4).equals("JOIN")) {
 				// JOIN - A client wants to join the server.
 
@@ -182,38 +186,41 @@ public class Server {
 			} else if (message.substring(0,6).equals("PLAYER")) {
 				// PLAYER - Send the input listener statuses.
 				
-				message = message.substring(7);
-				
-				boolean forward = Boolean.parseBoolean(message.substring(0, message.indexOf(' ')));
-				message = message.substring(message.indexOf(' ')+1);
-				boolean back = Boolean.parseBoolean(message.substring(0, message.indexOf(' ')));
-				message = message.substring(message.indexOf(' ')+1);
-				boolean left = Boolean.parseBoolean(message.substring(0, message.indexOf(' ')));
-				message = message.substring(message.indexOf(' ')+1);
-				boolean right = Boolean.parseBoolean(message.substring(0, message.length()));
-				
-				players.get(clientNum).move(map, forward, back, left, right);
+//				message = message.substring(7);
+//				
+//				boolean forward = Boolean.parseBoolean(message.substring(0, message.indexOf(' ')));
+//				message = message.substring(message.indexOf(' ')+1);
+//				boolean back = Boolean.parseBoolean(message.substring(0, message.indexOf(' ')));
+//				message = message.substring(message.indexOf(' ')+1);
+//				boolean left = Boolean.parseBoolean(message.substring(0, message.indexOf(' ')));
+//				message = message.substring(message.indexOf(' ')+1);
+//				boolean right = Boolean.parseBoolean(message.substring(0, message.indexOf(' ')));
+//				message = message.substring(message.indexOf(' ')+1);
+//				boolean openDoor = Boolean.parseBoolean(message.substring(0, message.length()));
+//				
+//				players.get(clientNum).move(map, forward, back, left, right, openDoor);
 			}
 		}
 
-		public void generatePositions() {	
+		private void generatePositions() {	
 			// get arraylist of empty positions for alien
-			ArrayList<int[]> alienEmptyPositions = new ArrayList<int[]>();
+			ArrayList<int[]> mazeEmptyPositions = new ArrayList<int[]>();
 			for (int i = 4; i < map.length - 4; i++) {
 				for (int j = 0; j < map[0].length; j++) {
 					if (map[i][j] == 0) {
 						int[] pos = {i, j};
-						alienEmptyPositions.add(pos);
+						mazeEmptyPositions.add(pos);
 					}
 				}
 			}
 			
 			// set up alien position
 			alien = new Alien(-1, -1, map);
-			int randomNum = randomNum(0, alienEmptyPositions.size()-1);
-			int[] position = alienEmptyPositions.get(randomNum);
+			int randomNum = randomNum(0, mazeEmptyPositions.size()-1);
+			int[] position = mazeEmptyPositions.get(randomNum);
 			alien.setxPos(position[0] + 0.5);
 			alien.setyPos(position[1] + 0.5);
+			mazeEmptyPositions.remove(randomNum);
 
 			// get arraylist of empty positions for player
 			ArrayList<int[]> playerEmptyPositions = new ArrayList<int[]>();
@@ -233,6 +240,23 @@ public class Server {
 				player.setxPos(position[0] + 0.5);
 				player.setyPos(position[1] + 0.5);
 				playerEmptyPositions.remove(randomNum);
+			}
+			
+			// set up rune positions
+			generatePassword();
+			for (int i = 0; i < password.length(); i++) {
+				
+			}
+		}
+		
+		private void generatePassword() {
+			// TODO
+			String characters = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+			password = "";
+			int size = 3;
+			for (int i = 0; i < size; i++) {
+				int randomNum = randomNum(0, characters.length()-1);
+				password += characters.charAt(randomNum);
 			}
 		}
 

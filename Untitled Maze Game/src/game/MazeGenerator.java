@@ -124,7 +124,7 @@ public class MazeGenerator {
 		// carve out final path
 		int randomNum = randomNum(0, emptyPositions.size()-1);
 		int[] position = emptyPositions.get(randomNum);
-		map[position[0]+1][position[1]] = 0;
+		map[position[0]+1][position[1]] = 2;
 	}
 
 	public void output() {

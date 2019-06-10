@@ -7,8 +7,8 @@ import javax.imageio.ImageIO;
 
 public class Image {
 	public static Image Wall = new Image("src/images/sci-fi-wall-1.png", "wall");
-	public static Image CommanderWall = new Image("src/images/bricks.png", "commanderwall");
-	public static Image EscapePodWall = new Image("src/images/minecraft.png", "escapepodwall");
+	public static Image Door = new Image("src/images/bricks.png", "door");
+	public static Image Rune = new Image("src/images/rune.png", "rune");
 	
 	public static Image MacReady = new Image("src/images/MacReady.png", "macready");
 	public static Image Ripley = new Image("src/images/Ripley.png", "ripley");

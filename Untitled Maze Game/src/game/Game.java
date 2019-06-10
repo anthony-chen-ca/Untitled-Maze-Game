@@ -23,6 +23,7 @@ import java.util.Scanner;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 public class Game extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -36,7 +37,7 @@ public class Game extends JFrame {
 	private int[] pixels;
 	private Screen screen;
 	private FPS fps = new FPS();
-	private InputListener inputListener;
+	private InputListenerGame inputListener;
 
 	// client
 	private Socket socket;
@@ -50,16 +51,19 @@ public class Game extends JFrame {
 	private String ip = "127.0.0.1";
 	private int port = 6666;
 
-	// main menu
-	private boolean mainMenu = true;
+	// font
 	private Font font = new Font("Calibri", Font.BOLD, 40);
 
 	// audio
-	private AudioClip mainMenuMusic;
+	private AudioClip ambience;
 	
 	// game objects
 	private ArrayList<Player> players;
 	private Alien alien;
+	private ArrayList<Rune> runes;
+	
+	// password
+	private String password = "123";
 	
 	public Game() {
 		// screen
@@ -68,8 +72,7 @@ public class Game extends JFrame {
 		this.HEIGHT = screenSize.height;
 		this.textures = new ArrayList<Image>();
 		this.textures.add(Image.Wall);
-		this.textures.add(Image.CommanderWall);
-		this.textures.add(Image.EscapePodWall);
+		this.textures.add(Image.Door);
 		this.screenImage = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		this.pixels = ((DataBufferInt)screenImage.getRaster().getDataBuffer()).getData();
 		
@@ -93,7 +96,7 @@ public class Game extends JFrame {
 		this.getContentPane().setCursor(blankCursor);
 
 		// listeners
-		this.inputListener = new InputListener(WIDTH, HEIGHT);
+		this.inputListener = new InputListenerGame(WIDTH, HEIGHT);
 		this.addKeyListener(inputListener);
 		this.addMouseListener(inputListener);
 		this.addMouseMotionListener(inputListener);
@@ -137,8 +140,8 @@ public class Game extends JFrame {
 		sendMessage("JOIN macready");
 		sendMessage("READY");
 		
-		setVisible(true);
 		requestFocus();
+		setVisible(true);
 		
 		while (running) {
 			// send and get messages from server
@@ -149,9 +152,7 @@ public class Game extends JFrame {
 					System.out.println("SERVER MESSAGE:\n"+message);
 					getData(message);
 				}
-				if (mainMenu == true) {
-					mainMenu();
-				} else if (gameRunning == true) {
+				if (gameRunning == true) {
 					gameLoop();
 				}
 			} catch (IOException e) {
@@ -160,24 +161,56 @@ public class Game extends JFrame {
 		}
 		close();
 	}
-	
-	public void mainMenu() {
-		this.mainMenuMusic.play();
-		this.setBackground(Color.BLACK);
-		// titleText.draw(g);
-	}
 
 	public void gameLoop() {
-		this.mainMenuMusic.play();
+		this.ambience.play();
 		fps.start();
 		// sendMessage("PLAYER"); // move networking
 		ArrayList<Sprite> sprites = getSprites(clientNum);
 		screen.update(players.get(clientNum), pixels, sprites); // update screen
-		players.get(clientNum).move(map, inputListener.forward, inputListener.back,
-				inputListener.left, inputListener.right);
+		players.get(clientNum).move(map, inputListener);
+		if (inputListener.interact == true) {
+			interact(players.get(clientNum));
+		}
 		alien.move(map, players);
 		drawFrame(); // displays to the screen in unrestricted time
 		fps.update();
+	}
+	
+	private void interact(Player player) {
+		JOptionPane.showMessageDialog (null, "MESSAGE", "Rune", JOptionPane.INFORMATION_MESSAGE);
+		
+		// look around
+    	double xPos = player.getxPos();
+		double yPos = player.getyPos();
+		int[] doorPos = new int[2];
+		if (map[((int)xPos)-1][((int)yPos)] == 2) { // left
+			doorPos[0] = ((int)xPos)-1;
+			doorPos[1] = ((int)yPos);
+		} else if (map[((int)xPos)][((int)yPos)-1] == 2) { // up 
+			doorPos[0] = ((int)xPos);
+			doorPos[1] = ((int)yPos)-1;
+		} else if (map[((int)xPos)+1][((int)yPos)] == 2) { // right
+			doorPos[0] = ((int)xPos)+1;
+			doorPos[1] = ((int)yPos);
+		} else if (map[((int)xPos)][((int)yPos)+1] == 2) { // down 
+			doorPos[0] = ((int)xPos);
+			doorPos[1] = ((int)yPos)+1;
+		} else { // does not exist
+			doorPos[0] = -1;
+			doorPos[1] = -1;
+		}
+
+		if (doorPos[0] != -1) { // if door is nearby
+			String input = JOptionPane.showInputDialog("Enter the password:");
+			System.out.println(input);
+
+			if (input.equals(password)) {
+				map[doorPos[0]][doorPos[1]] = 0;
+			}
+		}
+
+	    inputListener.interact = false;
 	}
 	
 	public void drawFrame() {
@@ -202,8 +235,7 @@ public class Game extends JFrame {
 
 	public void initializeMusic()
 			throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-		this.mainMenuMusic = new AudioClip("MainMenu");
-//		this.ambienceMusic = new AudioClip("Ambience");
+		this.ambience = new AudioClip("MainMenu");
 //		this.gameOverMusic = new AudioClip("GameOver");
 //		this.winMusic = new AudioClip("Win");
 	}
@@ -220,6 +252,12 @@ public class Game extends JFrame {
 				sprites.add(players.get(i).getSprite());
 			}
 		}
+		
+		// add runes
+		for (int i = 0; i < runes.size(); i++) {
+			sprites.add(runes.get(i).getSprite());
+		}
+		
 		return sprites;
 	}
 	
@@ -237,7 +275,8 @@ public class Game extends JFrame {
 			message += Boolean.toString(inputListener.forward)+" ";
 			message += Boolean.toString(inputListener.back)+" ";
 			message += Boolean.toString(inputListener.left)+" ";
-			message += Boolean.toString(inputListener.right);
+			message += Boolean.toString(inputListener.right)+" ";
+			message += Boolean.toString(inputListener.interact);
 		}
 		output.println(message);
 		output.flush();
