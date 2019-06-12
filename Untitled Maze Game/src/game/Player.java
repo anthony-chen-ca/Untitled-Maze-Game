@@ -1,29 +1,31 @@
 package game;
 
+/**
+ * Player
+ * @author Anthony
+ * A class for the player.
+ */
 public class Player extends Entity {
-	private static final long serialVersionUID = 1L;
-	
 	private int health;
 	
+	/**
+	 * Player constructor.
+	 * @param x
+	 * @param y
+	 * @param image
+	 */
 	public Player(double x, double y, Image image) {
 		super(x, y, 1, 1, 0.55, -0.55, new Sprite(x, y, image), 0.06);
 		this.health = 100;
 	}
 	
-//	public Player(double x, double y, double xd, double yd, double xp, double yp, Image image) {
-//		super(x, y, xd, yd, xp, yp, new Sprite(x, y, image), 0.06);
-//		this.health = 100;
-//	}
-	
-	public int getHealth() {
-		return this.health;
-	}
-	
-	public void setHealth(int health) {
-		this.health = health;
-	}
-	
-	public void move(int[][] map, InputListener inputListener) {
+	/**
+	 * move
+	 * This method will move the player according to the input listener.
+	 * @param map
+	 * @param inputListener
+	 */
+	public void move(int[][] map, InputListenerGame inputListener) {
 		boolean forward = inputListener.forward;
 		boolean back = inputListener.back;
 		boolean left = inputListener.left;
@@ -37,36 +39,10 @@ public class Player extends Entity {
 		if (back) {
 			moveBackward(map);
 		}
-//		if (left) { // perpendicular
-//			double xValue = (xDir+1.57)*MOVE_SPEED;
-//			if (map[(int)(xPos - xValue)][(int)yPos] == 0) {
-//				xPos -= xValue; // setXPOS
-//              sprite.xPos = xPos;
-//			}
-//			double yValue = (yDir+1.57)*MOVE_SPEED;
-//			if (map[(int)xPos][(int)(yPos - yValue)] == 0) {
-//				yPos -= yValue; // setYPOS
-//              sprite.yPos = yPos;
-//			}
-//		}
-//		if (right) {
-//			double xValue = (xDir+1.57)*MOVE_SPEED;
-//			if (map[(int)(xPos + xValue)][(int)yPos] == 0) {
-//				xPos += xValue; // setXPOS
-//              sprite.xPos = xPos;
-//			}
-//			double yValue = (yDir+1.57)*MOVE_SPEED;
-//			if (map[(int)xPos][(int)(yPos + yValue)] == 0) {
-//				yPos += yValue; // setYPOS
-//              sprite.yPos = yPos;
-//			}
-//		}
-		// if (turnAmountX < 0) { // look left
-		if (left) {
+		if (left) { // look left
 			rotateLeft();
 		}
-		// if (turnAmountX > 0) { // look right
-		if (right) {
+		if (right) { // look right
 			rotateRight();
 		}
 		
@@ -77,6 +53,11 @@ public class Player extends Entity {
 		}
 	}
 	
+	/**
+	 * moveForward
+	 * This method will move forward.
+	 * @param map
+	 */
 	private void moveForward(int[][] map) {
 		double xValue = xDir*MOVE_SPEED;
 		if (map[(int)(xPos + xValue)][(int)yPos] == 0) {
@@ -89,6 +70,11 @@ public class Player extends Entity {
 		}
 	}
 	
+	/**
+	 * moveBackward
+	 * This method will move backwards.
+	 * @param map
+	 */
 	private void moveBackward(int[][] map) {
 		double xValue = xDir*MOVE_SPEED;
 		if (map[(int)(xPos - xValue)][(int)yPos] == 0) {
@@ -100,7 +86,49 @@ public class Player extends Entity {
 			setyPos(yPos - yValue);
 		}
 	}
+
+//	private void moveLeft(int[][] map) {
+////		float xrotrad;
+////		xrotrad = (float)(xDir / 180 * Math.PI);
+////		
+////		double xValue = (float)(Math.cos(xrotrad)) * MOVE_SPEED;
+//		double xValue = xPlane*MOVE_SPEED;
+//		if (map[(int)(xPos + xValue)][(int)yPos] == 0) {
+//			setxPos(xPos + xValue);
+//		}
+//		
+////		float yrotrad;
+////		yrotrad = (float)(yDir / 180 * Math.PI);
+////		
+////		double yValue = (float)(Math.sin(yrotrad)) * MOVE_SPEED;
+//		double yValue = yPlane*MOVE_SPEED;
+//		if (map[(int)yPos][(int)(yPos + yValue)] == 0) {
+//			setyPos(yPos + yValue);
+//		}
+//	}
 	
+//	private void moveRight(int[][] map) {
+//		float xrotrad;
+//		xrotrad = (float)(xDir / 180 * Math.PI);
+//		
+//		double xValue = (float)(Math.cos(xrotrad)) * MOVE_SPEED;
+//		if (map[(int)(xPos - xValue)][(int)yPos] == 0) {
+//			setxPos(xPos - xValue);
+//		}
+//		
+//		float yrotrad;
+//		yrotrad = (float)(yDir / 180 * Math.PI);
+//		
+//		double yValue = (float)(Math.sin(yrotrad)) * MOVE_SPEED;
+//		if (map[(int)yPos][(int)(yPos - yValue)] == 0) {
+//			setyPos(yPos - yValue);
+//		}
+//	}
+	
+	/**
+	 * rotateLeft
+	 * This method will rotate to the left.
+	 */
 	private void rotateLeft() {
 		double rotateSpeed = ROTATION_SPEED;
 		// rotateSpeed = rotateSpeed * (turnAmountX / 10000);
@@ -115,6 +143,10 @@ public class Player extends Entity {
 		// inputListener.turnAmountX = 0;
 	}
 	
+	/**
+	 * rotateRight
+	 * This method will rotate to the right.
+	 */
 	private void rotateRight() {
 		double rotateSpeed = -ROTATION_SPEED;
 		// rotateSpeed = rotateSpeed * (turnAmountX / 10000);
@@ -129,7 +161,19 @@ public class Player extends Entity {
 		// inputListener.turnAmountX = 0;
 	}
 	
-	public void openDoor(int[][] map) {
-		
+	/**
+	 * getHealth
+	 * @return the health
+	 */
+	public int getHealth() {
+		return this.health;
+	}
+	
+	/**
+	 * setHealth
+	 * @param health
+	 */
+	public void setHealth(int health) {
+		this.health = health;
 	}
 }

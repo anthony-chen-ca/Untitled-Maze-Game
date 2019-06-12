@@ -1,5 +1,10 @@
 package game;
 
+/**
+ * FPS
+ * @author Anthony
+ * A class for calculating/displaying the frames per second.
+ */
 public class FPS {
 	private int startTime;
 	private int endTime;
@@ -8,10 +13,18 @@ public class FPS {
 	
 	private short displayFrames = 60;
 	
+	/**
+	 * start
+	 * This method will start the FPS counter.
+	 */
 	public void start() {
 		this.startTime = (int) System.currentTimeMillis();
 	}
 	
+	/**
+	 * update
+	 * This method will update the FPS counter.
+	 */
 	public void update() {
 		this.endTime = (int)System.currentTimeMillis();
 		this.frameTimes = frameTimes + endTime - startTime;
@@ -23,6 +36,11 @@ public class FPS {
 		}
 	}
 	
+	/**
+	 * getFPS
+	 * This method will return the display frames.
+	 * @return
+	 */
 	public int getFPS() {
 		return displayFrames;
 	}

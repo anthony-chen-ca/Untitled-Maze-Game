@@ -4,20 +4,33 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.awt.Color;
 
+/**
+ * Screen
+ * @author Anthony
+ * A class for the screen.
+ */
 public class Screen {
 	private int[][] map;
 	private int width;
 	private int height;
 	private ArrayList<Image> textures;
 
-	private double[] ZBuffer;
+	private double[] ZBuffer; // for sprite calculation
 
+	// fancy colors
 	private static Color ceiling = new Color(0,0,0);
 	private static Color floor = new Color(0,0,0);
 	private static Color blood = new Color(166,16,30);
 	
 	private static final Color GREEN_SCREEN = new Color(0,177,65);
 
+	/**
+	 * Screen constructor.
+	 * @param map
+	 * @param textures
+	 * @param width
+	 * @param height
+	 */
 	public Screen(int[][] map, ArrayList<Image> textures, int width, int height) {
 		this.map = map;
 		this.textures = textures;
@@ -160,10 +173,10 @@ public class Screen {
 				int color;
 				if (side == 0) {
 					color = textures.get(texNum).getPixels()[Math.abs(texX + (texY * textures.get(texNum).getWidth()))];
-//					color = fadeToBlack(color, perpWallDist); // TODO
+//					color = fadeToBlack(color, perpWallDist);
 				} else {
 					color = (textures.get(texNum).getPixels()[Math.abs(texX + (texY * textures.get(texNum).getHeight()))]>>1) & 8355711; // shadow on y sides
-//					color = fadeToBlack(color, perpWallDist); // TODO
+//					color = fadeToBlack(color, perpWallDist);
 				}
 				pixels[x + y*(width)] = color;
 			}
@@ -228,7 +241,6 @@ public class Screen {
 			Image image = sprite.getImage();
 
 			// draw the sprite stripe by stripe
-			// long startTime = System.currentTimeMillis();
 			for (int stripe = drawStartX; stripe < drawEndX; stripe++) {
 				int imageX = (int)(256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * image.getWidth() / spriteWidth) / 256;
 				// if is in front of the camera (yTransformed > 0) but before the wall
@@ -238,28 +250,32 @@ public class Screen {
 						int imageY = ((d * image.getHeight()) / spriteHeight) / 256;
 						int color = image.getPixels()[Math.abs(imageX + (imageY * image.getWidth()))];
 						if (color != GREEN_SCREEN.getRGB()) {
-//							color = fadeToBlack(color, sprite.getDist()); // TODO
+//							color = fadeToBlack(color, sprite.getDist());
 							pixels[stripe + y*(width)] = color;
 						}
 					}
 				}
 			}
-			// long endTime = System.currentTimeMillis();
-			// long duration = (endTime - startTime);
-			// System.out.println(duration+" milliseconds");
 		}
 		
 		/* BLOOD */
-//		if (player.getHealth() < 20) {
-//			for (int n = 0; n < pixels.length; n++) { // top
-//				int color = pixels[n];
-//				color = fadeToRed(color, 2);
-//				pixels[n] = color;
-//			}
-//		}
+		if (player.getHealth() <= 20) {
+			for (int n = 0; n < pixels.length; n++) { // top
+				int color = pixels[n];
+				color = fadeToRed(color, 2);
+				pixels[n] = color;
+			}
+		}
 		return pixels;
 	}
 	
+	/**
+	 * fadeToBlack
+	 * This method will fade the screen to black according to distance.
+	 * @param color
+	 * @param distance
+	 * @return
+	 */
 	public static int fadeToBlack(int color, double distance) {
 		if (distance <= 1) {
 			return color;
@@ -278,6 +294,13 @@ public class Screen {
 		}
 	}
 	
+	/**
+	 * fadeToRed
+	 * This method will tint the screen a shade of red.
+	 * @param color
+	 * @param distance
+	 * @return
+	 */
 	public static int fadeToRed(int color, double distance) {
 		if (distance <= 1) {
 			return color;
@@ -292,10 +315,25 @@ public class Screen {
 		}
 	}
 
+	/**
+	 * calcDist
+	 * This method will calculate the distance.
+	 * @param x1
+	 * @param y1
+	 * @param x2
+	 * @param y2
+	 * @return
+	 */
 	public static double calcDist(double x1, double y1, double x2, double y2) {
 		return (Math.pow((x1-x2), 2) + Math.pow((y1-y2), 2));
 	}
 
+	/**
+	 * sortSprites
+	 * This method will sort the sprites.
+	 * @param sprites
+	 * @return
+	 */
 	public static ArrayList<Sprite> sortSprites(ArrayList<Sprite> sprites) {
 		// insertion sort
 		// extract an element

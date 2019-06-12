@@ -25,6 +25,11 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+/**
+ * Game
+ * @author Anthony
+ * A class for running the game. Operates as a client.
+ */
 public class Game extends JFrame {
 	private static final long serialVersionUID = 1L;
 
@@ -38,7 +43,7 @@ public class Game extends JFrame {
 	private Screen screen;
 	private FPS fps = new FPS();
 	private InputListenerGame inputListener;
-
+	
 	// client
 	private Socket socket;
 	private BufferedReader input;
@@ -56,6 +61,7 @@ public class Game extends JFrame {
 
 	// audio
 	private AudioClip ambience;
+	private AudioClip breathing;
 	
 	// game objects
 	private ArrayList<Player> players;
@@ -65,6 +71,9 @@ public class Game extends JFrame {
 	// password
 	private String password = "123";
 	
+	/**
+	 * Game constructor.
+	 */
 	public Game() {
 		// screen
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -102,6 +111,10 @@ public class Game extends JFrame {
 		this.addMouseMotionListener(inputListener);
 	}
 
+	/**
+	 * start
+	 * This method will start the game and connect to a server.
+	 */
 	public synchronized void start() {
 		running = true;
 
@@ -110,6 +123,13 @@ public class Game extends JFrame {
 		play();
 	}
 
+	/**
+	 * connect
+	 * This method will connect to an IP address and port.
+	 * @param address
+	 * @param port
+	 * @return
+	 */
 	public Socket connect(String address, int port) {
 		try {
 			this.socket = new Socket(address, port);
@@ -122,6 +142,10 @@ public class Game extends JFrame {
 		return socket;
 	}
 
+	/**
+	 * play
+	 * This method will play the game.
+	 */
 	public void play() {
 		// join messages
 //		Scanner scanner = new Scanner(System.in);
@@ -162,8 +186,15 @@ public class Game extends JFrame {
 		close();
 	}
 
+	/**
+	 * gameLoop
+	 * This method contains the main game loop.
+	 */
 	public void gameLoop() {
 		this.ambience.play();
+		if (players.get(clientNum).getHealth() <= 20) {
+			this.breathing.play();
+		}
 		fps.start();
 		// sendMessage("PLAYER"); // move networking
 		ArrayList<Sprite> sprites = getSprites(clientNum);
@@ -177,9 +208,12 @@ public class Game extends JFrame {
 		fps.update();
 	}
 	
-	private void interact(Player player) {
-		JOptionPane.showMessageDialog (null, "MESSAGE", "Rune", JOptionPane.INFORMATION_MESSAGE);
-		
+	/**
+	 * interact
+	 * This method will have a player interact with the game world.
+	 * @param player
+	 */
+	private void interact(Player player) {		
 		// look around
     	double xPos = player.getxPos();
 		double yPos = player.getyPos();
@@ -203,16 +237,29 @@ public class Game extends JFrame {
 
 		if (doorPos[0] != -1) { // if door is nearby
 			String input = JOptionPane.showInputDialog("Enter the password:");
-			System.out.println(input);
-
-			if (input.equals(password)) {
-				map[doorPos[0]][doorPos[1]] = 0;
+			if (input != null) {
+				if (input.equals(password)) {
+					map[doorPos[0]][doorPos[1]] = 0;
+				}
+			}
+		} else {
+			for (Rune rune : runes) {
+				if ((int)rune.getxPos() == (int)xPos) {
+					if ((int)rune.getyPos() == (int)yPos) {
+						char c = rune.getSymbol();
+						JOptionPane.showMessageDialog(null, c, "Rune", JOptionPane.INFORMATION_MESSAGE);
+					}
+				}
 			}
 		}
 
 	    inputListener.interact = false;
 	}
 	
+	/**
+	 * drawFrame
+	 * This method will draw a frame of the screen.
+	 */
 	public void drawFrame() {
 		BufferStrategy bs = getBufferStrategy();
 		if (bs == null) {
@@ -233,13 +280,27 @@ public class Game extends JFrame {
 		g.dispose();
 	}
 
+	/**
+	 * initializeMusic
+	 * This method will initialize audio clips.
+	 * @throws UnsupportedAudioFileException
+	 * @throws IOException
+	 * @throws LineUnavailableException
+	 */
 	public void initializeMusic()
 			throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-		this.ambience = new AudioClip("MainMenu");
+		this.ambience = new AudioClip("Ambience");
+		this.breathing = new AudioClip("Breathing");
 //		this.gameOverMusic = new AudioClip("GameOver");
 //		this.winMusic = new AudioClip("Win");
 	}
 
+	/**
+	 * getSprites
+	 * This method will return the sprites a player needs to draw to their screen.
+	 * @param numPlayer
+	 * @return
+	 */
 	public ArrayList<Sprite> getSprites(int numPlayer) {
 		ArrayList<Sprite> sprites = new ArrayList<Sprite>();
 
@@ -261,6 +322,11 @@ public class Game extends JFrame {
 		return sprites;
 	}
 	
+	/**
+	 * sendMessage
+	 * This method will send a message to the server.
+	 * @param type
+	 */
 	public void sendMessage(String type) {
 		String message = "ERROR";
 		if (type.substring(0,4).equals("JOIN")) {
@@ -282,6 +348,11 @@ public class Game extends JFrame {
 		output.flush();
 	}
 	
+	/**
+	 * getData
+	 * This method will parse data from a server message.
+	 * @param message
+	 */
 	public void getData(String message) {
 		if (message.substring(0,5).equals("ERROR")) {
 			// ERROR - Something went wrong!
@@ -311,6 +382,11 @@ public class Game extends JFrame {
 		}
 	}
 	
+	/**
+	 * parseMap
+	 * This method will parse a map message.
+	 * @param message
+	 */
 	private void parseMap(String message) {
 		int width = Integer.parseInt(message.substring(0, message.indexOf(' ')));
 		message = message.substring(message.indexOf(' ')+1);
@@ -343,6 +419,11 @@ public class Game extends JFrame {
 		}
 	}
 
+	/**
+	 * parseSetup
+	 * This method will parse a setup message.
+	 * @param message
+	 */
 	private void parseSetup(String message) {
 		// parse number of players
 		int numPlayers = Integer.parseInt(message.substring(0, message.indexOf(' ')));
@@ -392,12 +473,7 @@ public class Game extends JFrame {
 		int j = 0;
 		while (j < 2) {
 			int endIndex = message.indexOf(' ', currentIndex);
-			String data;
-			if (endIndex != -1) {
-				data = message.substring(currentIndex, endIndex);
-			} else { // if reach the end
-				data = message.substring(currentIndex, message.length());
-			}
+			String data = message.substring(currentIndex, endIndex);
 			if (j == 0) { // x
 				xPos = Double.parseDouble(data);
 			} else { // y
@@ -407,11 +483,52 @@ public class Game extends JFrame {
 			j++;
 		}
 		this.alien = new Alien(xPos, yPos, map);
+		
+		// parse number of runes
+		int endIndex = message.indexOf(' ', currentIndex);
+		int numRunes = Integer.parseInt(message.substring(currentIndex, endIndex));
+		message = message.substring(message.indexOf(' ')+1);
+		
+		// parse data for runes
+		this.runes = new ArrayList<Rune>();
+		i = 0;
+		while (i < numRunes) {
+			// rune info
+			xPos = -1;
+			yPos = -1;
+			char symbol = 'x';
+			
+			j = 0;
+			while (j < 3) { // get information
+				endIndex = message.indexOf(' ', currentIndex);
+				String data = message.substring(currentIndex, endIndex);
+				if (j == 0) { // x
+					xPos = Double.parseDouble(data);
+				} else if (j == 1) { // y
+					yPos = Double.parseDouble(data);
+				} else { // char
+					symbol = data.charAt(0);
+				}
+				currentIndex = endIndex + 1;
+				j++;
+			}
+			Rune rune = new Rune(xPos, yPos, symbol);
+			runes.add(rune);
+			i++;
+		}
+		
+		// parse password
+		this.password = message.substring(currentIndex, message.length());
 
 		// initialize screen
 		this.screen = new Screen(map, textures, WIDTH, HEIGHT);
 	}
 	
+	/**
+	 * parseGame
+	 * This method will parse a game message.
+	 * @param message
+	 */
 	private void parseGame(String message) {
 		// parse players
 		int currentIndex = 0;
@@ -475,6 +592,10 @@ public class Game extends JFrame {
 
 	}
 
+	/**
+	 * close
+	 * This method will close sockets.
+	 */
 	public void close() {
 		try {
 			socket.close();

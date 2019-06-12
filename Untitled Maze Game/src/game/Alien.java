@@ -1,31 +1,53 @@
 package game;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+
+/**
+ * Alien
+ * @author Anthony
+ * spooky scary skeletons
+ */
 public class Alien extends Entity {
-	private static final long serialVersionUID = 1L;
-	
 	private boolean active = true;
 	private int damage;
 
+	// pathfinding
+	private Pathfinding algorithm;
 	private boolean needNewPath = false;
 	private int huntX = -1;
 	private int huntY = -1;
+	
+	// sound effects
+	private AudioClip distortion;
 
-	private Pathfinding algorithm;
-
+	/**
+	 * Alien constructor.
+	 * @param x
+	 * @param y
+	 * @param map
+	 */
 	public Alien(double x, double y, int[][] map) {
 		super(x, y, 1, 1, 0.66, -0.66, new Sprite(x, y, Image.Alien), 0.03);
 		this.damage = 1;
 		this.algorithm = new Pathfinding(map);
+		
+		try {
+			initializeSoundEffects();
+		} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+			e.printStackTrace();
+		}
 	}
 
-//	public Alien(double x, double y, double xd, double yd, double xp, double yp, int[][] map) {
-//		super(x, y, xd, yd, xp, yp, new Sprite(x, y, Image.Alien), 0.03);
-//		this.damage = 1;
-//		this.algorithm = new Pathfinding(map);
-//	}
-
+	/**
+	 * move
+	 * This method will move the alien.
+	 * @param map
+	 * @param players
+	 */
 	public void move(int[][] map, ArrayList<Player> players) {
 		// TODO Auto-generated method stub
 		if (active) {
@@ -35,10 +57,20 @@ public class Alien extends Entity {
 		}
 	}
 
+	/**
+	 * rest
+	 * The alien will take a well-deserved break.
+	 */
 	public void rest() {
 		// TODO
 	}
 
+	/**
+	 * chasePlayer
+	 * The alien will chase the player.
+	 * @param map
+	 * @param players
+	 */
 	public void chasePlayer(int[][] map, ArrayList<Player> players) {
 		// find closest player
 		// calculate best path to player
@@ -52,6 +84,7 @@ public class Alien extends Entity {
 		if (caughtPlayers(players)) {
 			attackPlayers(players);
 		} else {
+			distortion.pause();
 			ArrayList<PathSquare> bestPath = algorithm.getBestPath();
 			PathSquare move = getNextMove(bestPath);
 			if (move.getX() + 0.5 < xPos) {
@@ -79,6 +112,12 @@ public class Alien extends Entity {
 		}
 	}
 
+	/**
+	 * getNextMove
+	 * The alien will decide the next best move according to a calculated best path.
+	 * @param bestPath
+	 * @return
+	 */
 	public PathSquare getNextMove(ArrayList<PathSquare> bestPath) {
 		if (bestPath.size() == 1) { // if arrived
 			return bestPath.get(0);
@@ -99,12 +138,18 @@ public class Alien extends Entity {
 		return bestPath.get(1);
 	}
 
+	/**
+	 * attackPlayers
+	 * The alien will yeet itself onto players, causing tremendous damage.
+	 * @param players
+	 */
 	public void attackPlayers(ArrayList<Player> players) {
 		for (Player player : players) {
 			if ((int)this.xPos == (int)player.xPos && (int)this.yPos == (int)player.yPos) {
+				distortion.play();
 				player.setHealth(player.getHealth() - this.damage);
 				if (player.getHealth() == 0) {
-					System.out.println("F FOR RESPECTS");
+					System.out.println("YOU HAVE DIED");
 					System.exit(0);
 				}
 			}
@@ -114,6 +159,12 @@ public class Alien extends Entity {
 		// active = false;
 	}
 
+	/**
+	 * caughtPlayers
+	 * This method will check if an alien has caught up to a player.
+	 * @param players
+	 * @return
+	 */
 	private boolean caughtPlayers(ArrayList<Player> players) {
 		for (Player player : players) {
 			if ((int)(player.xPos) == (int)(xPos)) {
@@ -125,6 +176,11 @@ public class Alien extends Entity {
 		return false;
 	}
 
+	/**
+	 * getTarget
+	 * This method will obtain the closest target from an arraylist of players.
+	 * @param players
+	 */
 	private void getTarget(ArrayList<Player> players) {
 		if (players.size() == 1) {
 			int newHuntX = (int)players.get(0).xPos;
@@ -154,14 +210,43 @@ public class Alien extends Entity {
 		}
 	}
 
+	/**
+	 * calculateDistance
+	 * This method will calculate a distance according to the Pythagorean Theorem.
+	 * @param x1
+	 * @param y1
+	 * @param x2
+	 * @param y2
+	 * @return
+	 */
 	private double calculateDistance(double x1, double y1, double x2, double y2) {
 		return (double)(Math.sqrt(Math.pow(x1-x2, 2) + Math.pow(y1-y2, 2)));
 	}
 	
+	/**
+	 * initializeSoundEffects
+	 * This method will initialize sound effects.
+	 * @throws UnsupportedAudioFileException
+	 * @throws IOException
+	 * @throws LineUnavailableException
+	 */
+	public void initializeSoundEffects()
+			throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+		this.distortion = new AudioClip("Distortion");
+	}
+	
+	/**
+	 * isActive
+	 * @return
+	 */
 	public boolean isActive() {
 		return this.active;
 	}
 	
+	/**
+	 * setActive
+	 * @param active
+	 */
 	public void setActive(boolean active) {
 		this.active = active;
 	}

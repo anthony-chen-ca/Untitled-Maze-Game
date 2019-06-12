@@ -3,23 +3,34 @@ package game;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * MazeGenerator
+ * @author Anthony
+ * A class for generating random mazes.
+ */
 public class MazeGenerator {
 	private int size;
 	private int mapSize;
 	private int[][] map;
 	private MazeCell[][] nodeGrid;
-	private ArrayList<MazeCell> unlinkedNodes;
 
+	/**
+	 * MazeGenerator constructor.
+	 * @param size
+	 */
 	public MazeGenerator(int size) {
 		this.size = size;
-		unlinkedNodes = new ArrayList<MazeCell>();
-		genNodeGrid();
-		genPaths();
-		genMap();
+		generateNodeGrid();
+		generatePaths();
+		generateMap();
 		// output();
 	}
 	
-	private void genNodeGrid() {
+	/**
+	 * generateNodeGrid
+	 * This method will generate a node grid.
+	 */
+	private void generateNodeGrid() {
 		nodeGrid = new MazeCell[size][size];
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
@@ -48,7 +59,11 @@ public class MazeGenerator {
 		}
 	}
 
-	private void genPaths() {
+	/**
+	 * generatePaths
+	 * This method will generate paths.
+	 */
+	private void generatePaths() {
 		nodeGrid[0][0].startLinkPath();
 		while (!checkVisited()) {
 			for (int row = 0; row < size; row++) {
@@ -61,6 +76,11 @@ public class MazeGenerator {
 		}
 	}
 
+	/**
+	 * checkVisited
+	 * This method will check if a node has been visited.
+	 * @return
+	 */
 	private boolean checkVisited() {
 		for (int row = 0; row < size; row++) {
 			for (int col = 0; col < size; col++) {
@@ -72,7 +92,11 @@ public class MazeGenerator {
 		return true;
 	}
 
-	private void genMap() {
+	/**
+	 * generateMap
+	 * This method will generate a map.
+	 */
+	private void generateMap() {
 		this.mapSize = size * 2 + 1;
 		map = new int[mapSize][mapSize];
 
@@ -127,6 +151,10 @@ public class MazeGenerator {
 		map[position[0]+1][position[1]] = 2;
 	}
 
+	/**
+	 * output
+	 * This method will output the maze to the console.
+	 */
 	public void output() {
 		// printing
 		for (int i = 0; i < mapSize; i++) {
@@ -142,14 +170,30 @@ public class MazeGenerator {
 		}
 	}
 	
+	/**
+	 * randomNum
+	 * This method will return a random number.
+	 * @param min
+	 * @param max
+	 * @return
+	 */
 	public int randomNum(int min, int max) {
 		return ThreadLocalRandom.current().nextInt(min, max + 1);
 	}
 
+	/**
+	 * getMap
+	 * This method will return the 2D map.
+	 * @return
+	 */
 	public int[][] getMap() {
 		return map;
 	}
 
+	/**
+	 * main
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		new MazeGenerator(10);
 	}

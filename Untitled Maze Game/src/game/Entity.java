@@ -1,15 +1,16 @@
 package game;
 
-import java.io.Serializable;
-
-public abstract class Entity implements Serializable {
-	private static final long serialVersionUID = 1L;
-	
-	protected double xPos;
+/**
+ * Entity
+ * @author Anthony
+ * A class for entities.
+ */
+public abstract class Entity {
+	protected double xPos; // location on the 2D map
 	protected double yPos;
-	protected double xDir;
+	protected double xDir; // vector that points in the direction the player is facing
 	protected double yDir;
-	protected double xPlane;
+	protected double xPlane; // perpendicular to the direction vector
 	protected double yPlane;
 	
 	public double MOVE_SPEED = .06;
@@ -17,6 +18,17 @@ public abstract class Entity implements Serializable {
 	
 	protected Sprite sprite;
 	
+	/**
+	 * Entity constructor.
+	 * @param x
+	 * @param y
+	 * @param xd
+	 * @param yd
+	 * @param xp
+	 * @param yp
+	 * @param sprite
+	 * @param MOVE_SPEED
+	 */
 	public Entity(double x, double y, double xd, double yd, double xp, double yp, Sprite sprite, double MOVE_SPEED) {	
 		this.xPos = x;
 		this.yPos = y;

@@ -13,6 +13,11 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+/**
+ * MainMenu
+ * @author Anthony
+ * A class for the main menu.
+ */
 public class MainMenu extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
@@ -24,6 +29,9 @@ public class MainMenu extends JFrame {
 	// audio
 	private AudioClip mainMenuMusic;
 
+	/**
+	 * MainMenu constructor.
+	 */
 	public MainMenu() {
 		super("Untitled Maze Game");
 		
@@ -52,10 +60,19 @@ public class MainMenu extends JFrame {
 		this.setVisible(true);
 	}
 	
+	/**
+	 * refresh
+	 * This method will refresh the menu area panel.
+	 */
 	public void refresh() {
 		this.menuAreaPanel.repaint();
 	}
 	
+	/**
+	 * MenuAreaPanel
+	 * @author Anthony
+	 * A class for the menu area panel.
+	 */
 	private class MenuAreaPanel extends JPanel {
 		private static final long serialVersionUID = 1L;
 		
@@ -73,6 +90,11 @@ public class MainMenu extends JFrame {
 		// buttons
 		private Button playButton;
 		
+		/**
+		 * MenuAreaPanel constructor.
+		 * @param WIDTH
+		 * @param HEIGHT
+		 */
 		public MenuAreaPanel(int WIDTH, int HEIGHT) {
 			this.WIDTH = WIDTH;
 			this.HEIGHT = HEIGHT;
@@ -90,6 +112,9 @@ public class MainMenu extends JFrame {
 			this.addMouseMotionListener(inputListener);
 		}
 		
+		/* (non-Javadoc)
+		 * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
+		 */
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			setDoubleBuffered(true);
@@ -99,6 +124,11 @@ public class MainMenu extends JFrame {
 			}
 		}
 		
+		/**
+		 * mainMenu
+		 * This method display the main menu.
+		 * @param g
+		 */
 		public void mainMenu(Graphics g) {
 			mainMenuMusic.play();
 			this.setBackground(Color.BLACK);
@@ -114,14 +144,26 @@ public class MainMenu extends JFrame {
 					play = true;
 				}
 				inputListener.setClicked(false);
+				mainMenuMusic.stop();
 			}
 		}
 	}
 	
+	/**
+	 * isPlaying
+	 * @return menuAreaPanel.play
+	 */
 	public boolean isPlaying() {
 		return this.menuAreaPanel.play;
 	}
 	
+	/**
+	 * initializeMusic
+	 * This method will initialize music.
+	 * @throws UnsupportedAudioFileException
+	 * @throws IOException
+	 * @throws LineUnavailableException
+	 */
 	public void initializeMusic()
 			throws UnsupportedAudioFileException, IOException, LineUnavailableException {
 		this.mainMenuMusic = new AudioClip("MainMenu");

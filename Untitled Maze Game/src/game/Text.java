@@ -10,6 +10,11 @@ import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Text
+ * @author Anthony
+ * A class for text.
+ */
 public class Text {
 	private Font textFont; // 1
 	private Font headingFont; // 2
@@ -20,6 +25,13 @@ public class Text {
 	private Color color;
 	private Rectangle rect;
 	
+	/**
+	 * Text constructor.
+	 * @param type
+	 * @param text
+	 * @param color
+	 * @param rect
+	 */
 	public Text(int type, String text, Color color, Rectangle rect) {
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 //		try {
@@ -28,7 +40,7 @@ public class Text {
 //			e.printStackTrace();
 //		}
 		
-		//setting different font styles 
+		// setting different font styles 
 		this.textFont = new Font("Arial", Font.PLAIN, 30);
 		this.headingFont = new Font("Arial", Font.PLAIN, 50);
 		this.titleFont = new Font("Arial", Font.PLAIN, 80);
@@ -39,6 +51,11 @@ public class Text {
 		this.rect = rect;
 	}
 	
+	/**
+	 * draw
+	 * This method will draw text to the screen.
+	 * @param g
+	 */
 	public void draw(Graphics g) {
 		FontMetrics metrics;
 		if (type == 1) {
@@ -58,14 +75,26 @@ public class Text {
 		g.drawString(text, centeredX, centeredY);
 	}
 	
+	/**
+	 * setText
+	 * @param text
+	 */
 	public void setText(String text) {
 		this.text = text;
 	}
 	
+	/**
+	 * setColor
+	 * @param color
+	 */
 	public void setColor(Color color) {
 		this.color = color;
 	}
 	
+	/**
+	 * getRect
+	 * @return the rect
+	 */
 	public Rectangle getRect() {
 		return this.rect;
 	}

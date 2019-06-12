@@ -3,6 +3,11 @@ package game;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * Pathfinding
+ * @author Anthony
+ * A class for the A* pathfinding algorithm.
+ */
 public class Pathfinding {
 	private int[][] map;
 
@@ -13,35 +18,28 @@ public class Pathfinding {
 
 	private ArrayList<PathSquare> bestPath; // from start square to destination square
 
-	public static void main(String[] args) {
-		int[][] map = new int[][] {
-			{1,1,1,1,1,1,1,1,1,1},
-			{1,0,1,0,0,0,0,0,0,1},
-			{1,0,1,1,1,1,1,1,0,1},
-			{1,0,1,0,0,0,0,1,0,1},
-			{1,0,0,0,1,1,0,0,0,1},
-			{1,1,1,1,1,1,1,1,1,1}
-		};
-		Pathfinding pathfinding = new Pathfinding(map);
-		for (int i = 0; i < 999; i++) {
-			pathfinding.calculateBestPath(1,1,1,8);
-			// pathfinding.output(1, 7);
-		}
-	}
-
+	/**
+	 * Pathfinding constructor.
+	 * @param map
+	 */
 	public Pathfinding(int[][] map) {
 		this.map = map;
 		this.openList = new ArrayList<PathSquare>();
 		this.closedList = new ArrayList<PathSquare>();
 	}
-	
-	public ArrayList<PathSquare> getBestPath() {
-		return this.bestPath;
-	}
 
+	/**
+	 * calculateBestPath
+	 * This method will calculate the best path.
+	 * @param startX
+	 * @param startY
+	 * @param endX
+	 * @param endY
+	 */
 	public void calculateBestPath(int startX, int startY, int endX, int endY) {
 		if (map[endX][endY] != 0) {
-			System.out.println("WHAT THE FUCK IT'S IN A WALL");
+			System.out.println("LOL IT'S IN A WALL");
+			System.out.println("MISSION ABORT MISSION ABORT");
 			System.exit(0);
 		}
 		
@@ -120,34 +118,13 @@ public class Pathfinding {
 		System.out.println("No path found.");
 	}
 
-//	public void output(int endX, int endY) {
-//		int[][] newMap = new int[map.length][map[0].length];
-//		copyArray(map, newMap);
-//		System.out.println("Best Path:");
-//		for (PathSquare square : bestPath) {
-//			newMap[square.getX()][square.getY()] = 2;
-//		}
-//
-//		for (int i = 0; i < newMap.length; i++) {
-//			for (int j = 0; j < newMap[0].length; j++) {
-//				if (i == endX && j == endY) {
-//					System.out.print("X ");
-//				} else {
-//					System.out.print(newMap[i][j]+" ");
-//				}
-//			}
-//			System.out.println();
-//		}
-//	}
-
-//	private void copyArray(int[][] map, int[][] newMap) {
-//		for (int i = 0; i < map.length; i++) {
-//			for (int j = 0; j < map[0].length; j++) {
-//				newMap[i][j] = map[i][j];
-//			}
-//		}
-//	}
-
+	/**
+	 * isValid
+	 * This method will check if a point is valid on the map.
+	 * @param x
+	 * @param y
+	 * @return
+	 */
 	private boolean isValid(int x, int y) {
 		if (x >= 0 && x < map.length) {
 			if (y >= 0 && y < map[0].length) {
@@ -159,6 +136,11 @@ public class Pathfinding {
 		return false;
 	}
 
+	/**
+	 * getLowestScoreSquare
+	 * This method will return the lowest score of a square to use.
+	 * @return
+	 */
 	private PathSquare getLowestScoreSquare() {
 		if (openList.size() == 1) {
 			return openList.get(0);
@@ -173,7 +155,44 @@ public class Pathfinding {
 		}
 	}
 
+	/**
+	 * calculateHValue
+	 * This method will calculate the H value.
+	 * @param x1
+	 * @param y1
+	 * @param x2
+	 * @param y2
+	 * @return
+	 */
 	private double calculateHValue(int x1, int y1, int x2, int y2) {
 		return (double)(Math.sqrt(Math.pow(x1-x2, 2) + Math.pow(y1-y2, 2))); 
+	}
+	
+	/**
+	 * getBestPath
+	 * @return the bestPath
+	 */
+	public ArrayList<PathSquare> getBestPath() {
+		return this.bestPath;
+	}
+	
+	/**
+	 * main
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		int[][] map = new int[][] {
+			{1,1,1,1,1,1,1,1,1,1},
+			{1,0,1,0,0,0,0,0,0,1},
+			{1,0,1,1,1,1,1,1,0,1},
+			{1,0,1,0,0,0,0,1,0,1},
+			{1,0,0,0,1,1,0,0,0,1},
+			{1,1,1,1,1,1,1,1,1,1}
+		};
+		Pathfinding pathfinding = new Pathfinding(map);
+		for (int i = 0; i < 999; i++) {
+			pathfinding.calculateBestPath(1,1,1,8);
+			// pathfinding.output(1, 7);
+		}
 	}
 }

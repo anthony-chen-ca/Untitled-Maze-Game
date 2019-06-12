@@ -10,6 +10,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * Server
+ * @author Anthony
+ * A class for the server. Run Server first, and then run Main.
+ * (Quick Note:	Some sections are commented out because I wanted to implement multiplayer,
+ * 				but I did not have enough time.)
+ */
 public class Server {
 	// server
 	private ServerSocket serverSocket;
@@ -33,10 +40,18 @@ public class Server {
 	// password
 	private String password;
 
+	/**
+	 * main
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		new Server().go();
 	}
 
+	/**
+	 * go
+	 * This method will start up the server.
+	 */
 	public void go() {
 		System.out.println("SERVER SIDE:");
 		Socket client = null;
@@ -62,6 +77,11 @@ public class Server {
 		}
 	}
 	
+	/**
+	 * ClientHandler
+	 * @author Anthony
+	 * A class for handling the clients.
+	 */
 	private class ClientHandler implements Runnable {
 		private Socket client;
 		private BufferedReader input;
@@ -69,6 +89,10 @@ public class Server {
 		private boolean running;
 		private int clientNum;
 
+		/**
+		 * ClientHandler constructor.
+		 * @param client
+		 */
 		public ClientHandler(Socket client) {
 			this.client = client;
 			try {
@@ -81,6 +105,9 @@ public class Server {
 			this.running = true;
 		}
 
+		/* (non-Javadoc)
+		 * @see java.lang.Runnable#run()
+		 */
 		@Override
 		public void run() {
 			// send and get messages from client
@@ -99,6 +126,12 @@ public class Server {
 			close();
 		}
 
+		/**
+		 * sendMessage
+		 * This method will send a message to the client.
+		 * @param type
+		 * @param broadcast
+		 */
 		private void sendMessage(String type, boolean broadcast) {
 			String message = "ERROR";
 			if (type.equals("CLIENT")) {
@@ -122,7 +155,8 @@ public class Server {
 					}
 				}
 			} else if (type.equals("SETUP")) {
-				// SETUP - Set up the initial game object positions.
+				// SETUP - Set up the initial game.
+				// SETUP [playersize] [playerinfo] [alieninfo] [runesize] [runeinfo] [password]
 				
 				generatePositions();
 				message = "SETUP "+players.size()+" ";
@@ -130,6 +164,11 @@ public class Server {
 					message += player.xPos+" "+player.yPos+" "+player.sprite.getImage().getName()+" ";
 				}
 				message += alien.xPos+" "+alien.yPos+" ";
+				message += runes.size()+" ";
+				for (Rune rune : runes) {
+					message += rune.getxPos()+" "+rune.getyPos()+" "+rune.getSymbol()+" ";
+				}
+				message += password;
 			} else if (type.equals("GAME")) {
 				// GAME - Send the game state.
 				
@@ -158,6 +197,11 @@ public class Server {
 			}
 		}
 
+		/**
+		 * getData
+		 * This method will parse data from a message.
+		 * @param message
+		 */
 		private void getData(String message) {
 			if (message.substring(0,4).equals("JOIN")) {
 				// JOIN - A client wants to join the server.
@@ -202,7 +246,14 @@ public class Server {
 			}
 		}
 
-		private void generatePositions() {	
+		/**
+		 * generatePositions
+		 * This method will generate positions.
+		 */
+		private void generatePositions() {
+			int randomNum;
+			int[] position;
+			
 			// get arraylist of empty positions for alien
 			ArrayList<int[]> mazeEmptyPositions = new ArrayList<int[]>();
 			for (int i = 4; i < map.length - 4; i++) {
@@ -216,11 +267,27 @@ public class Server {
 			
 			// set up alien position
 			alien = new Alien(-1, -1, map);
-			int randomNum = randomNum(0, mazeEmptyPositions.size()-1);
-			int[] position = mazeEmptyPositions.get(randomNum);
+			randomNum = randomNum(0, mazeEmptyPositions.size()-1);
+			position = mazeEmptyPositions.get(randomNum);
 			alien.setxPos(position[0] + 0.5);
 			alien.setyPos(position[1] + 0.5);
 			mazeEmptyPositions.remove(randomNum);
+			
+			// set up rune positions
+			generatePassword();
+			for (int i = 0; i < password.length(); i++) {
+				// for each character
+				// create a new rune object
+				// move it to a random position
+
+				Rune rune = new Rune(-1, -1, password.charAt(i));
+				randomNum = randomNum(0, mazeEmptyPositions.size()-1);
+				position = mazeEmptyPositions.get(randomNum);
+				rune.setxPos(position[0] + 0.5);
+				rune.setyPos(position[1] + 0.5);
+				mazeEmptyPositions.remove(randomNum);
+				runes.add(rune);
+			}
 
 			// get arraylist of empty positions for player
 			ArrayList<int[]> playerEmptyPositions = new ArrayList<int[]>();
@@ -241,14 +308,12 @@ public class Server {
 				player.setyPos(position[1] + 0.5);
 				playerEmptyPositions.remove(randomNum);
 			}
-			
-			// set up rune positions
-			generatePassword();
-			for (int i = 0; i < password.length(); i++) {
-				
-			}
 		}
 		
+		/**
+		 * generatePassword
+		 * This method will generate a random password.
+		 */
 		private void generatePassword() {
 			// TODO
 			String characters = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -260,10 +325,21 @@ public class Server {
 			}
 		}
 
+		/**
+		 * randomNum
+		 * This method will return a random number.
+		 * @param min
+		 * @param max
+		 * @return
+		 */
 		public int randomNum(int min, int max) {
 			return ThreadLocalRandom.current().nextInt(min, max + 1);
 		}
 
+		/**
+		 * close
+		 * This method will close all client sockets.
+		 */
 		public void close() {
 			try {
 				client.close();
@@ -275,6 +351,12 @@ public class Server {
 		}
 	}
 
+	/**
+	 * getMap
+	 * This method will generate a maze map.
+	 * @param num
+	 * @return
+	 */
 	public int[][] getMap(int num) {
 		// size * 2 + 1 = actual size
 		// actual size is 41

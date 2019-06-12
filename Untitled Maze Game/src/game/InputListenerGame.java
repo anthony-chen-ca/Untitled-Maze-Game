@@ -4,12 +4,22 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.MouseEvent;
 
+/**
+ * InputListenerGame
+ * @author Anthony
+ * A extended input listener that will recenter the mouse.
+ */
 public class InputListenerGame extends InputListener {
 	private Robot robot;
 	private boolean isRecentering = false;
 	public int turnAmountX = 0;
 	// public int turnAmountY = 0;
 	
+	/**
+	 * InputListenerGame constructor.
+	 * @param WIDTH
+	 * @param HEIGHT
+	 */
 	public InputListenerGame(int WIDTH, int HEIGHT) {
 		super(WIDTH, HEIGHT);
 		try {
@@ -19,6 +29,9 @@ public class InputListenerGame extends InputListener {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see game.InputListener#mouseMoved(java.awt.event.MouseEvent)
+	 */
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		if (isRecentering && e.getX() == WIDTH/2 && e.getY() == HEIGHT/2) {
@@ -35,6 +48,10 @@ public class InputListenerGame extends InputListener {
 		}
 	}
 	
+	/**
+	 * recenterMouse
+	 * This method will recenter the mouse position.
+	 */
 	private void recenterMouse() {
 		isRecentering = true;
 		robot.mouseMove(WIDTH/2, HEIGHT/2);
