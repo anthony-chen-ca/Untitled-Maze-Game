@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -22,6 +21,7 @@ public class Server {
 	private ServerSocket serverSocket;
 	private int port = 6666;
 	private boolean running = true;
+	@SuppressWarnings("unused")
 	private boolean gameRunning = false;
 	
 	private int readyNum = 0;

@@ -76,8 +76,6 @@ public class MainMenu extends JFrame {
 	private class MenuAreaPanel extends JPanel {
 		private static final long serialVersionUID = 1L;
 		
-		public final int WIDTH;
-		public final int HEIGHT;
 		private InputListener inputListener;
 		
 		// statuses
@@ -96,9 +94,6 @@ public class MainMenu extends JFrame {
 		 * @param HEIGHT
 		 */
 		public MenuAreaPanel(int WIDTH, int HEIGHT) {
-			this.WIDTH = WIDTH;
-			this.HEIGHT = HEIGHT;
-			
 			// text
 			title = new Text(3, "Untitled Maze Game", Color.WHITE, new Rectangle(0,0,WIDTH,HEIGHT/2));
 			

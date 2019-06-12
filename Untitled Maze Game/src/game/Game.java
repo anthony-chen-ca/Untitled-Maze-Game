@@ -13,12 +13,9 @@ import java.awt.image.DataBufferInt;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -51,7 +48,6 @@ public class Game extends JFrame {
 	private boolean running = true;
 	private boolean gameRunning = false;
 	
-	private String room = "room";
 	private int clientNum;
 	private String ip = "127.0.0.1";
 	private int port = 6666;

@@ -34,16 +34,16 @@ public class Text {
 	 */
 	public Text(int type, String text, Color color, Rectangle rect) {
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-//		try {
-//			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("src/fonts/MetalMania-Regular.ttf")));
-//		} catch (FontFormatException | IOException e) {
-//			e.printStackTrace();
-//		}
+		try {
+			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("src/fonts/IBMPlexMono-Regular.ttf")));
+		} catch (FontFormatException | IOException e) {
+			e.printStackTrace();
+		}
 		
 		// setting different font styles 
-		this.textFont = new Font("Arial", Font.PLAIN, 30);
-		this.headingFont = new Font("Arial", Font.PLAIN, 50);
-		this.titleFont = new Font("Arial", Font.PLAIN, 80);
+		this.textFont = new Font("IBM Plex Mono", Font.PLAIN, 30);
+		this.headingFont = new Font("IBM Plex Mono", Font.PLAIN, 50);
+		this.titleFont = new Font("IBM Plex Mono", Font.PLAIN, 80);
 		
 		this.type = type;
 		this.text = text;
