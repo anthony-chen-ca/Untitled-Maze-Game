@@ -98,7 +98,7 @@ public class MainMenu extends JFrame {
 			title = new Text(3, "Untitled Maze Game", Color.WHITE, new Rectangle(0,0,WIDTH,HEIGHT/2));
 			
 			// buttons
-			Text playButtonText = new Text(2, "PLAY", Color.WHITE, new Rectangle(0,HEIGHT/2,WIDTH,HEIGHT/4));
+			Text playButtonText = new Text(2, "Play", Color.WHITE, new Rectangle(0,HEIGHT/2,WIDTH,HEIGHT/4));
 			playButton = new Button(playButtonText.getRect(), Color.DARK_GRAY, playButtonText);
 			
 			this.inputListener = new InputListener(WIDTH, HEIGHT);

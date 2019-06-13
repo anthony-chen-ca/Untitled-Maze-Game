@@ -18,7 +18,7 @@ public class FPS {
 	 * This method will start the FPS counter.
 	 */
 	public void start() {
-		this.startTime = (int) System.currentTimeMillis();
+		this.startTime = (int)System.currentTimeMillis();
 	}
 	
 	/**

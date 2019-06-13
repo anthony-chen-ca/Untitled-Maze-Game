@@ -14,6 +14,11 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 public class Alien extends Entity {
 	private boolean active = true;
 	private int damage;
+	
+	// toggle activity
+	private int startTime;
+	private int endTime;
+	private int frameTimes = 0;
 
 	// pathfinding
 	private Pathfinding algorithm;
@@ -40,6 +45,8 @@ public class Alien extends Entity {
 		} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
 			e.printStackTrace();
 		}
+		
+		this.startTime = (int)System.currentTimeMillis();
 	}
 
 	/**
@@ -50,10 +57,25 @@ public class Alien extends Entity {
 	 */
 	public void move(int[][] map, ArrayList<Player> players) {
 		// TODO Auto-generated method stub
-		if (active) {
+		if (active == true) {
 			chasePlayer(map, players);
 		} else {
 			rest();
+		}
+		updateActivity();
+	}
+	
+	public void updateActivity() {
+		this.endTime = (int)System.currentTimeMillis();
+		this.frameTimes = frameTimes + endTime - startTime;
+		
+		if (frameTimes >= 3000) {
+			if (this.active == true) {
+				this.active = false;
+			} else {
+				this.active = true;
+			}
+			frameTimes = 0;
 		}
 	}
 
@@ -149,7 +171,11 @@ public class Alien extends Entity {
 				distortion.play();
 				player.setHealth(player.getHealth() - this.damage);
 				if (player.getHealth() == 0) {
-					System.out.println("YOU HAVE DIED");
+					System.out.println("\n\n\nG A M E  O V E R\n");
+					System.out.println("H");
+					System.out.println("E");
+					System.out.println("L");
+					System.out.println("P");
 					System.exit(0);
 				}
 			}

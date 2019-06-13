@@ -48,7 +48,8 @@ public class Player extends Entity {
 		
 		// win condition
 		if (xPos >= map.length - 3) {
-			System.out.println("YOU WIN!");
+			System.out.println("\n\n\nCongratulations on surviving.");
+			System.out.println("\nA rescue ship will be coming to your location very soon. Stay safe.");
 			System.exit(0);
 		}
 	}
