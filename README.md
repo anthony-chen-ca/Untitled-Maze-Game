@@ -8,3 +8,6 @@ Features randomly generated maps, smart AI path-finding, and custom-made graphic
 * Smart AI path-finding based on the A* pathfinding algorithm
 * Server-client interaction
 * Custom-made graphics based on my favourite sci-fi horror movies
+
+## How to play
+* Run Server.java first, and then run Main.java.
